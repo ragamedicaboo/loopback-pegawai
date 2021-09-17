@@ -1,0 +1,13 @@
+{
+  "MongoDB": {
+    "host": "localhost",
+    "port": 27017,
+    "url": "",
+    "database": "loopback-pegawai",
+    "password": "",
+    "name": "MongoDB",
+    "user": "",
+    "useNewUrlParser": true,
+    "connector": "mongodb"
+  }
+}
