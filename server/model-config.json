@@ -12,5 +12,17 @@
       "../common/mixins",
       "./mixins"
     ]
+  },
+  "pegawai": {
+    "dataSource": "MongoDB",
+    "public": true
+  },
+  "testModel": {
+    "dataSource": "MongoDB",
+    "public": true
+  },
+  "absenPegawai": {
+    "dataSource": "MongoDB",
+    "public": true
   }
 }
