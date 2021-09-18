@@ -1,0 +1,41 @@
+{
+  "name": "pegawai",
+  "plural": "pegawai",
+  "base": "Model",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "username": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "nama": {
+      "type": "string",
+      "required": true
+    },
+    "kelamin": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "createdAt": {
+      "type": "date",
+      "required": true,
+      "defaultFn": "now"
+    },
+    "jabatan": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
