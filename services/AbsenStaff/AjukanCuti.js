@@ -27,12 +27,12 @@ class AjukanCuti
 							"$eq" : [ { "$year" : "$createdAt" }, now.getFullYear() ],
 							"$eq" : [ "$pegawaiId", request.username ],
 							"$eq" : [ "$status", Config.CUTI.toString() ],
+							"$eq" : [ "$keterangan.canceled", false ]
 						}
 					}
 				}
 			])
 			.toArray();
-
 			request.durasi = Number( request.durasi );
 			if( cuti.length > 0 ) {
 				for( let data of cuti ) {
