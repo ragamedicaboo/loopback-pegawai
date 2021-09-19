@@ -5,7 +5,6 @@ const AbsenConfig = require( `@services/AbsenStaff/Config` );
 const Moment      = require( `moment` );
 
 module.exports = function(Absenpegawai) {
-
 	Absenpegawai.hadir = async (username, cb) => {
 		// set status
 		const dateNow = Moment( new Date );
@@ -37,6 +36,47 @@ module.exports = function(Absenpegawai) {
 		AbsenStaff.catatKehadiran( ctx )
 		.then( response => {
 			if( response.code != 200 ) return ctx.res.send( response );
+
+			return next();
+		} )
+	} );
+
+
+
+
+	Absenpegawai.cuti = async ( keterangan, durasi, username, cb ) => {
+		try {
+			await Absenpegawai.create({
+				pegawaiId 	: username,
+				status 		: AbsenConfig.CUTI,
+				keterangan 	: {
+					keterangan : keterangan,
+					durasi 	   : durasi,
+					approve	   : false
+				}
+			});
+			cb( null, `Cuti telah diajukan , silahkan tunggu konfirmasi selanjutnya` );
+		}
+		catch( e ) {
+			cb( e )
+		}
+	};
+
+	Absenpegawai.remoteMethod( `cuti`, {
+		accepts : [
+			{ arg : "keterangan", type : "string", required : true, description : "keterangan cuti" },
+			{ arg : "durasi", type : "number", required : true, description : "durasi cuti" },
+			{ arg : "username", type : "string", http : { source : "path" }, description : "username pegawai" }
+		],
+		returns : { arg : "data", type : "object" },
+		http : { verb : "POST", path : "/:username/cuti" },
+		description : "Mengajukan cuti bagi pegawai"
+	} );
+
+	Absenpegawai.beforeRemote( `cuti`, ( ctx, unused, next ) => {
+		AbsenStaff.ajukanCuti( ctx )
+		.then( response => {
+			if( response.code != 200 ) return ctx.res.status(response.code).send( response.msg );
 
 			return next();
 		} )
