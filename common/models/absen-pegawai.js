@@ -3,6 +3,9 @@
 const AbsenStaff  = require( `@services/AbsenStaff/AbsenStaff` );
 const AbsenConfig = require( `@services/AbsenStaff/Config` );
 const Moment      = require( `moment` );
+const DataSource  = require( `@helpers/dataSourceConnector` );
+const App 		  = require( `@app` );
+const ObjectId	  = require( `bson-objectid` );
 
 module.exports = function(Absenpegawai) {
 	Absenpegawai.hadir = (username, cb) => {
@@ -51,7 +54,8 @@ module.exports = function(Absenpegawai) {
 			keterangan 	: {
 				keterangan : keterangan,
 				durasi 	   : durasi,
-				approve	   : false
+				approved   : false,
+				canceled   : false
 			}
 		})
 		.then( response => {
@@ -80,5 +84,41 @@ module.exports = function(Absenpegawai) {
 
 			return next();
 		} )
-	} )
+	} );
+
+
+
+
+	Absenpegawai.cancelCuti = ( cuti, cb ) => {
+		const ds = DataSource( Absenpegawai );
+		const where = { "_id" : ObjectId( cuti ) };
+		const data = {
+			"$set" : {
+				"keterangan.canceled" : true
+			}
+		}
+		
+		ds.collection.updateOne( where, data )
+		.then( response => {
+			cb( null, `Jadwal cuti berhasil dibatalkan` );
+		} )
+		.catch( e => {
+			cb( e );
+		} )
+	};
+
+	Absenpegawai.remoteMethod( `cancelCuti`, {
+		accepts : { arg : "cuti", type : `string`, http : { source : "path" }, description : "id cuti" },
+		returns : { arg : "data", type : "object" },
+		http 	: { verb : "delete", path : "/cuti/:cuti/cancel" }
+	} );
+
+	Absenpegawai.beforeRemote( `cancelCuti`, ( ctx, unused, next ) => {
+		AbsenStaff.cancelCuti( ctx )
+		.then( response => {
+			if( response.code != 200 ) return ctx.res.status(response.code).send( response.msg );
+
+			return next();
+		} )
+	} );
 };
