@@ -121,4 +121,30 @@ module.exports = function(Absenpegawai) {
 			return next();
 		} )
 	} );
+
+
+
+
+	Absenpegawai.approveCuti = ( cuti, cb ) => {
+		const ds = DataSource( Absenpegawai );
+		const where = { "_id" : ObjectId( cuti ) };
+		const data = {
+			"$set" : {
+				"keterangan.approved" : true
+			}
+		}
+		
+		ds.collection.updateOne( where, data )
+		.then( response => {
+			cb( null, `Jadwal cuti berhasil diapprove` );
+		} )
+		.catch( e => {
+			cb( e );
+		} )
+	};
+	Absenpegawai.remoteMethod( `approveCuti`, {
+		accepts : { arg : "cuti", type : "string", http : { source : "path" }, description : "id cuti" },
+		returns : { arg : "data", type : "object" },
+		http	: { verb : "patch", path : "/cuti/:cuti/approve" }
+	} );
 };
