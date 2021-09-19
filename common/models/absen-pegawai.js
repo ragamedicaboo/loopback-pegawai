@@ -19,6 +19,8 @@ module.exports = function(Absenpegawai) {
 				createdAt  : dateNow,
 				keterangan : keterangan
 			});
+
+			cb( null, `Berhasil menyimpan data absen` );
 		}
 		catch( e )
 		{
@@ -35,7 +37,7 @@ module.exports = function(Absenpegawai) {
 	Absenpegawai.beforeRemote( `hadir`, function( ctx, unused, next ){
 		AbsenStaff.catatKehadiran( ctx )
 		.then( response => {
-			if( response.code != 200 ) return ctx.res.send( response );
+			if( response.code != 200 ) return ctx.res.status(response.code).send( response.msg );
 
 			return next();
 		} )
