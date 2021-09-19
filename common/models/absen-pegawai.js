@@ -5,27 +5,25 @@ const AbsenConfig = require( `@services/AbsenStaff/Config` );
 const Moment      = require( `moment` );
 
 module.exports = function(Absenpegawai) {
-	Absenpegawai.hadir = async (username, cb) => {
+	Absenpegawai.hadir = (username, cb) => {
 		// set status
 		const dateNow = Moment( new Date );
 		const isTepat = dateNow.diff( AbsenConfig.GET_JAM_MASUK() ) <= 0;
 		const status  = ( isTepat ) ? AbsenConfig.TEPAT : AbsenConfig.TELAT;
 		const keterangan  = ( isTepat ) ? "Tepat waktu" : "Terlambat";
 
-		try {
-			await Absenpegawai.create({
-				pegawaiId  : username,
-				status 	   : status,
-				createdAt  : dateNow,
-				keterangan : keterangan
-			});
-
+		Absenpegawai.create({
+			pegawaiId  : username,
+			status 	   : status,
+			createdAt  : dateNow,
+			keterangan : keterangan
+		})
+		.then( response => {
 			cb( null, `Berhasil menyimpan data absen` );
-		}
-		catch( e )
-		{
+		} )
+		.catch( e => {
 			cb( e );
-		}
+		})
 	}
 
 	Absenpegawai.remoteMethod( `hadir`, {
@@ -46,22 +44,22 @@ module.exports = function(Absenpegawai) {
 
 
 
-	Absenpegawai.cuti = async ( keterangan, durasi, username, cb ) => {
-		try {
-			await Absenpegawai.create({
-				pegawaiId 	: username,
-				status 		: AbsenConfig.CUTI,
-				keterangan 	: {
-					keterangan : keterangan,
-					durasi 	   : durasi,
-					approve	   : false
-				}
-			});
+	Absenpegawai.cuti = ( keterangan, durasi, username, cb ) => {
+		Absenpegawai.create({
+			pegawaiId 	: username,
+			status 		: AbsenConfig.CUTI,
+			keterangan 	: {
+				keterangan : keterangan,
+				durasi 	   : durasi,
+				approve	   : false
+			}
+		})
+		.then( response => {
 			cb( null, `Cuti telah diajukan , silahkan tunggu konfirmasi selanjutnya` );
-		}
-		catch( e ) {
-			cb( e )
-		}
+		} )
+		.catch( e => {
+			cb( e );
+		})
 	};
 
 	Absenpegawai.remoteMethod( `cuti`, {
