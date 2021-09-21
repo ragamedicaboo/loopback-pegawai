@@ -147,4 +147,24 @@ module.exports = function(Absenpegawai) {
 		returns : { arg : "data", type : "object" },
 		http	: { verb : "patch", path : "/cuti/:cuti/approve" }
 	} );
+
+
+
+
+	Absenpegawai.getAbsen = async ( username, filter, cb ) => {
+		const request = {
+			username : username,
+			...filter
+		};
+
+		return await AbsenStaff.getAbsen( request );
+	}
+	Absenpegawai.remoteMethod( `getAbsen`, {
+		accepts : [
+			{ arg : "username", type : "string", http : { source : "path" }, description : "username pegawai" },
+			{ arg : "filter", type : "object", http : { source : "filter" }, description : "filter string harus { key : value }" }
+		],
+		returns : { arg : "data", type : "object" },
+		http : { verb : "GET", path : "/:username/report" }
+	} );
 };

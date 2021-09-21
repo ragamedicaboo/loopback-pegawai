@@ -2,6 +2,7 @@ const app  		= require( `@app` );
 const Kehadiran = require( `@services/AbsenStaff/CatatKehadiran` );
 const Cuti 		= require( `@services/AbsenStaff/AjukanCuti` );
 const CancelCuti = require( `@services/AbsenStaff/BatalkanCuti` );
+const ReportAbsen = require( `@services/AbsenStaff/ReportAbsen` );
 
 class AbsenStaff
 {
@@ -23,6 +24,11 @@ class AbsenStaff
 		const cancel = new CancelCuti( ctx.req.params );
 
 		return await cancel.do();
+	}
+
+	static async getAbsen( request ) 
+	{
+		return await ReportAbsen.get( request );
 	}
 }
 
