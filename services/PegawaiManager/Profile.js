@@ -38,7 +38,7 @@ class Profile
 	static async registeredDate( username )
 	{
 		const user = await Profile.getByUsername( username );
-		return { code : 200, data : { createdAt : Moment( user[0].createdAt ) } };
+		return { code : 200, data : { createdAt : user[0].createdAt } };
 	}
 }
 
