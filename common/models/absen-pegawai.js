@@ -151,18 +151,21 @@ module.exports = function(Absenpegawai) {
 
 
 
-	Absenpegawai.getAbsen = async ( username, filter, cb ) => {
-		const request = {
-			username : username,
-			...filter
-		};
+	Absenpegawai.getAbsen = async ( username, filter, ctx, cb ) => {
+		let request = {};
 
-		return await AbsenStaff.getAbsen( request );
+		Object.assign( request, { username : username } );
+		request = { ...request, ...filter };
+
+		const response = await AbsenStaff.getAbsen( request );
+		
+		ctx.res.send( response );
 	}
 	Absenpegawai.remoteMethod( `getAbsen`, {
 		accepts : [
 			{ arg : "username", type : "string", http : { source : "path" }, description : "username pegawai" },
-			{ arg : "filter", type : "object", http : { source : "filter" }, description : "filter string harus { key : value }" }
+			{ arg : "filter", type : "object", http : { source : "query" }, description : "username pegawai" },
+			{ arg : "ctx", type : "object", http : { source : "context" } }
 		],
 		returns : { arg : "data", type : "object" },
 		http : { verb : "GET", path : "/:username/report" }
